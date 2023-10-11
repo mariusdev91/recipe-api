@@ -31,6 +31,7 @@ myenv/
 media/
 static/
 recipe_hub/media_root/
+recipe_hub/apps/openfoodfacts-python/.gitignore
 
 # Database dump files
 *.dump

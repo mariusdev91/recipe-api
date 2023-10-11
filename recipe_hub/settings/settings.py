@@ -54,6 +54,8 @@ INSTALLED_APPS = [
 
     'recipe_hub.apps.recipe',
     'recipe_hub.apps.user',
+
+    'recipe_hub.apps.openfoodfacts-python'
 ]
 
 MIDDLEWARE = [
