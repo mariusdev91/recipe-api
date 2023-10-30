@@ -13,3 +13,4 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ['name', 'recipe_type', 'ingredients', 'cooking_time', 'number_of_portions']
         depth = 1
+

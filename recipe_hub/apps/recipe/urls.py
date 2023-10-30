@@ -7,3 +7,4 @@ urlpatterns = [
     path('recipe-type/', ListCreateRecipeTypeView.as_view(), name='recipe-type-list-create')
 
 ]
+
