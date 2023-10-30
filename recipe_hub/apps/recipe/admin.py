@@ -12,6 +12,11 @@ class RecipeAdminForm(forms.ModelForm):
     ingredients = forms.JSONField(
         widget=forms.Textarea(attrs={'class': 'ingredients-json-input'})
     )
+    cooking_time = forms.DurationField(
+        widget=forms.Textarea(
+            attrs={'placeholder': 'Enter duration '
+                                  '(e.g., 1:30:00 for 1 hour 30 minutes)'})
+    )
 
 
 class RecipeAdmin(admin.ModelAdmin):
