@@ -27,3 +27,4 @@ environ~=1.0
 setuptools~=65.5.0
 tqdm~=4.66.1
 django-model-utils~=4.3.1
+drf-extra-fields==3.7.0
