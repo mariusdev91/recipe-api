@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from recipe_hub.apps.recipe import urls as recipe_urls
+from recipe_hub.apps.user import urls as account_urls
 
 urlpatterns = [
     path('v1/admin/', admin.site.urls),
-    path('v1/recipe/', include(recipe_urls, namespace='recipe'))
+    path('v1/recipe/', include(recipe_urls, namespace='recipe')),
+    path('v1/account/', include(account_urls, namespace='account')),
 ]
 
