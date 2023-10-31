@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from recipe_hub.apps.recipe import urls as recipe_urls
 from recipe_hub.apps.user import urls as account_urls
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('v1/admin/', admin.site.urls),
@@ -25,3 +27,4 @@ urlpatterns = [
     path('v1/account/', include(account_urls, namespace='account')),
 ]
 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

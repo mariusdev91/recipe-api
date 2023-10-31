@@ -9,7 +9,7 @@ class RecipeType(models.Model):
         ('4', 'Dinner'),
         ('5', 'Snack')
     )
-    type = models.CharField(max_length=128, choices=RECIPE_TYPE_NAME, unique=True)
+    type = models.CharField(max_length=128, choices=RECIPE_TYPE_NAME)
 
     def __str__(self):
         for choice in self.RECIPE_TYPE_NAME:
