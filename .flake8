@@ -1,2 +1,2 @@
 [flake8]
-exclude=myenv/, recipe_hub/apps/openfoodfacts-python/, recipe_hub/apps/recipe/migrations
+exclude=myenv/, recipe_hub/apps/openfoodfacts-python/, recipe_hub/apps/recipe/migrations, env/
