@@ -17,3 +17,10 @@ class AuthorConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'recipe_hub.apps.recipe.models.author'
     label = 'recipe_hub_author'
+
+
+class SignalConfig(AppConfig):
+    name = 'recipe_hub_recipe'
+
+    def ready(self):
+        import recipe_hub_recipe.signals  # noqa

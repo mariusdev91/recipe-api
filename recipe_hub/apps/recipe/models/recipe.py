@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import F
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from model_utils.models import TimeStampedModel
 
 from recipe_hub.apps.recipe.models.author import Author
@@ -10,11 +12,11 @@ class Recipe(TimeStampedModel):
     title = models.CharField(max_length=100)
     short_history = models.TextField(blank=True)
     recipe_type = models.ForeignKey(
-                    'RecipeType',
-                    on_delete=models.CASCADE,
-                    null=False,
-                    blank=False
-                )
+        'RecipeType',
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
+    )
     ingredients = models.JSONField(null=False, blank=False)
     description = models.TextField(max_length=250, blank=True)
     preparation_time = models.DurationField()
@@ -38,19 +40,19 @@ class Recipe(TimeStampedModel):
                f" is cooked in {self.cooking_time}" \
                f" and it serves {self.number_of_portions} persons."
 
-    def update_author_recipe_count(self):
-        self.author.recipe_count = F('recipe_count') + 1
-        self.author.save(update_fields=['recipe_count'])
-
     def update_rating(self, new_rating):
         self.rating = new_rating
         self.save()
 
-    def save(self):
-        self.update_author_recipe_count()
-        super().save()
 
-    def delete(self, *args, **kwargs):
-        self.author.recipe_count = F('recipe_count') - 1
-        self.author.save()
-        super().delete(*args, **kwargs)
+@receiver(post_save, sender=Recipe)
+def update_recipe_count_on_save(sender, instance, created, **kwargs):
+    if created:
+        Author.objects.filter(pk=instance.author.pk) \
+            .update(recipe_count=F('recipe_count') + 1)
+
+
+@receiver(post_delete, sender=Recipe)
+def update_recipe_count_on_delete(sender, instance, **kwargs):
+    Author.objects.filter(pk=instance.author.pk).update(
+        recipe_count=F('recipe_count') - 1)

@@ -1,6 +1,15 @@
 from rest_framework import serializers
-from recipe_hub.apps.recipe.models import RecipeType, Recipe
+from recipe_hub.apps.recipe.models import RecipeType, Recipe, Review
 from drf_extra_fields.fields import Base64ImageField
+from django.contrib.auth.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email',
+                  'password']
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class RecipeTypeSerializer(serializers.ModelSerializer):
@@ -45,7 +54,7 @@ class RecipeSerializer(serializers.Serializer):
                 recipe_type_id = recipe_type_instance.id
                 data['recipe_type_id'] = recipe_type_id
             else:
-                raise serializers.\
+                raise serializers. \
                     ValidationError("Invalid recipe type provided.")
 
         description = data.get('description')
@@ -69,3 +78,82 @@ class RecipeSerializer(serializers.Serializer):
         recipe = Recipe.objects.create(
             recipe_type=recipe_type, **validated_data)
         return recipe
+
+
+class ReviewSerializers(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    user = UserSerializer(read_only=True)
+    recipe = RecipeSerializer(read_only=True)
+    text = serializers.CharField()
+
+    def validate(self, data):
+        recipe = self.context.get('recipe')
+        user = self.context.get('user')
+
+        if recipe and 'id' in recipe:
+            recipe_id = recipe['id']
+        existing_recipes = Recipe.objects.all().values_list('id', flat=True)
+
+        data['recipe_id'] = recipe_id
+        data['user'] = user
+        data['text'] = self.context.get('text')
+
+        if recipe_id not in list(existing_recipes):
+            raise serializers.ValidationError(
+                {'Recipe': [f"Recipe with the id: "
+                            f"'{recipe_id}' does not "
+                            f"exist in the database."]}
+            )
+
+        return data
+
+    def create(self, validated_data):
+        recipe_id = validated_data['recipe_id']
+        user = validated_data['user']
+
+        created_review = Review.objects.create(
+            recipe_id=recipe_id,
+            user=user,
+            text=validated_data['text'],
+        )
+
+        return created_review
+
+
+class AuthorSerializers(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+    social_media_account = serializers.URLField()
+    recipe_count = serializers.IntegerField(read_only=True)
+
+    def validate(self, data):
+        first_name = self.context.get('recipe')
+        last_name = self.context.get('user')
+        email = self.context.get('recipe')
+        social_media_account = self.context.get('social_media_account')
+
+        data['first_name'] = first_name
+        data['last_name'] = last_name
+        data['email'] = email
+        data['social_media_account'] = social_media_account
+
+        
+
+        return data
+
+    def create(self, validated_data):
+        recipe_id = validated_data['recipe_id']
+        user = validated_data['user']
+
+        created_review = Review.objects.create(
+            recipe_id=recipe_id,
+            user=user,
+            text=validated_data['text'],
+        )
+
+        return created_review
+
+
+
