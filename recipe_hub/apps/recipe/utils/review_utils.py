@@ -13,6 +13,7 @@ class ReviewLinkDisplay:
             return links_html
 
         reviews = obj.reviews.only('id').all()
+        print(reviews)
         if not reviews:
             links_html = "No reviews for this recipe"
         else:
@@ -21,8 +22,8 @@ class ReviewLinkDisplay:
                 format_html_join(
                     '\n', "<a href='{}'>{}</a><br>",
                     (
-                        (reverse('admin:app_review_change',
-                                 args=(review.id,)),
+                        (reverse('recipe_hub_recipe:review-list',
+                         args=(review.id,)),
                          f'Review {review.id}')
                         for review in reviews
                     )
